@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from datetime import datetime
 from .models import Job
 
@@ -42,3 +42,11 @@ def encontrar_jobs(request):
         else:
             jobs = Job.objects.filter(reservado=False)
         return render(request, 'jobs/encontrar_jobs.html', {'jobs': jobs})
+
+
+def aceitar_job(request, id):
+        job = Job.objects.get(id=id)
+        job.profissional = request.user
+        job.reservado = True
+        job.save()
+        return redirect(request, 'jobs/aceitar_job.html')
