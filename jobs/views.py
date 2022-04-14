@@ -2,10 +2,12 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.messages import constants
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from .models import Job
 
 
+@login_required(login_url='/auth/logar')
 def encontrar_jobs(request):
     if request.method == 'GET':
 
@@ -47,6 +49,7 @@ def encontrar_jobs(request):
         return render(request, 'jobs/encontrar_jobs.html', {'jobs': jobs})
 
 
+@login_required(login_url='/auth/logar')
 def aceitar_job(request, id):
     job = Job.objects.get(id=id)
     job.profissional = request.user
@@ -55,6 +58,7 @@ def aceitar_job(request, id):
     return redirect('jobs/encontrar_jobs.html')
 
 
+@login_required(login_url='/auth/logar')
 def perfil(request):
     if request.method == "GET":
         jobs = Job.objects.filter(profissional=request.user)
@@ -88,3 +92,16 @@ def perfil(request):
         messages.add_message(request, constants.SUCCESS,
                              'Dados alterado com sucesso')
         return redirect('/jobs/perfil')
+
+
+@login_required(login_url='/auth/logar')
+def enviar_projeto(request):
+    arquivo = request.FILES.get('file')
+    id_job = request.POST.get('id')
+
+    job = Job.objects.get(id=id_job)
+
+    job.arquivo_final = arquivo
+    job.status = 'AA'
+    job.save()
+    return redirect('/jobs/perfil')
