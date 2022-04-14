@@ -60,7 +60,7 @@ def logar(request):
             return redirect('/auth/logar')
         else:
             auth.login(request, user)
-            return redirect('/')
+            return redirect('/jobs/encontrar_jobs')
 
 
 def sair(request):
